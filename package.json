@@ -1,0 +1,48 @@
+{
+  "name": "function-modifiers",
+  "version": "0.0.9",
+  "description": "Some non prototypal (static) implementations of possibly desirable JavaScript/EcmaScript function modifiers.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petsel/es-function-modifiers.git"
+  },
+  "keywords": [
+    "ecmascript",
+    "javascript",
+    "function",
+    "modify",
+    "modifiers",
+    "around",
+    "before",
+    "after",
+    "afterReturning",
+    "afterThrowing",
+    "afterFinally"
+  ],
+  "author": "Peter Seliger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/petsel/es-function-modifiers/issues"
+  },
+  "homepage": "https://github.com/petsel/es-function-modifiers#readme",
+  "scripts": {
+    "generate-doc": "node_modules/.bin/jsdoc --configure jsdoc.config.json --verbose",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write \"**/*.{md,yaml,yml,js,json}\"",
+    "test": "LOG_LEVEL=debug jest"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "jest": "^26.6.3",
+    "jsdoc": "~3.6.6",
+    "minami": "^1.2.3",
+    "prettier": "2.2.1"
+  }
+}
