@@ -1,0 +1,8 @@
+.idea
+coverage
+docs/generated
+dist
+lib
+node_modules
+package.json
+package-lock.json

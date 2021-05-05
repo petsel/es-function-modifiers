@@ -1,0 +1,13 @@
+{
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "shippedProposals": true,
+        "targets": {
+          "node": "current"
+        }
+      }
+    ]
+  ]
+}
