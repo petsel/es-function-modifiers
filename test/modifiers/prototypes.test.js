@@ -11,6 +11,9 @@ const fctPrototypeDescriptorStringDefault = JSON.stringify(
 
 const modifierNameList = ['around'];
 
+afterAll(restorePrototypeDefault);
+beforeEach(enableModifierPrototypes);
+
 describe('## Running the Test-Suite for method-modifier prototypes ...', () => {
   describe(
     '### ... there is the possibility of enabling prototypal implementations' +
@@ -31,7 +34,6 @@ describe('## Running the Test-Suite for method-modifier prototypes ...', () => {
 
       describe('### Enabling all method-modifier prototypes one expects that ...', () => {
         test('... each implementation is accessible.', () => {
-          enableModifierPrototypes();
           expect(
             modifierNameList.every(modifierName =>
               isFunction(fctPrototype[modifierName]),
@@ -42,7 +44,6 @@ describe('## Running the Test-Suite for method-modifier prototypes ...', () => {
           const descriptorStringWithModifiers = JSON.stringify(
             Object.getOwnPropertyDescriptors(fctPrototype),
           );
-
           expect(descriptorStringWithModifiers).not.toBe(
             fctPrototypeDescriptorStringDefault,
           );
@@ -51,8 +52,16 @@ describe('## Running the Test-Suite for method-modifier prototypes ...', () => {
 
       describe('### Restoring the `Function.prototype` to its standardized default one expects that ...', () => {
         test('... not a single prototypal method modifier is present.', () => {
-          enableModifierPrototypes();
+          // each implementation is accessible.
+          expect(
+            modifierNameList.every(modifierName =>
+              isFunction(fctPrototype[modifierName]),
+            ),
+          ).toBe(true);
+
           restorePrototypeDefault();
+
+          // not a single prototypal method modifier is present.
           expect(
             modifierNameList.every(
               modifierName => !isFunction(fctPrototype[modifierName]),
@@ -60,11 +69,19 @@ describe('## Running the Test-Suite for method-modifier prototypes ...', () => {
           ).toBe(true);
         });
         test('... the property descriptor of `Function.prototype` meets the standardized default.', () => {
+          // each implementation is accessible.
+          expect(
+            modifierNameList.every(modifierName =>
+              isFunction(fctPrototype[modifierName]),
+            ),
+          ).toBe(true);
+
           restorePrototypeDefault();
+
           const restoredDescriptorString = JSON.stringify(
             Object.getOwnPropertyDescriptors(fctPrototype),
           );
-
+          // `Function.prototype` meets the standardized default.
           expect(restoredDescriptorString).toBe(
             fctPrototypeDescriptorStringDefault,
           );
