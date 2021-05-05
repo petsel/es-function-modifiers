@@ -17,6 +17,7 @@
   "rules": {
     "import/prefer-default-export": "off",
     "no-param-reassign": "off",
+    "prefer-object-spread": "warn",
     "no-multiple-empty-lines": ["error", { "max": 2 }]
   }
 }
