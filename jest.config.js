@@ -3,8 +3,12 @@
 
 module.exports = {
   coverageDirectory: 'coverage',
-  coverageReporters: ['html', 'json', 'text', 'text-summary'],
-  // coverageProvider: 'babel', // default
+  // specified as cli arguments within
+  // package.json's scripts configurations.
+  //
+  // //coverageReporters: ['text', 'text-summary'],
+  // //coverageReporters: ['html', 'json', 'text', 'text-summary'],
+  // //coverageProvider: 'babel', // default
 
   collectCoverageFrom: [
     './src/**/*.{js,jsx}',
@@ -13,7 +17,7 @@ module.exports = {
   // collectCoverage: true, // default
 
   // to not use/specify the next block solves the
-  // proble of the non running/collecting coverage.
+  // problem of the non running/collecting coverage.
   //
   // // The root directory that Jest should scan for tests and modules within
   // rootDir: './test',

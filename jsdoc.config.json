@@ -6,7 +6,7 @@
   "source": {
     "include": ["src/", "README.md"],
     "includePattern": ".js$",
-    "excludePattern": "(node_modules/|docs/|test/)"
+    "excludePattern": "(node_modules/|coverage/|docs/|test/jest.*)"
   },
   "plugins": ["plugins/markdown"],
   "templates": {
