@@ -28,12 +28,12 @@ export function around(handler, target) {
     isFunction(handler) &&
     isFunction(proceed) &&
 
-    function aroundHandler(...argumentsList) {
+    function aroundHandler(...argumentArray) {
       return handler.call(
         target || getSanitizedTarget(this),
         proceed,
         handler,
-        argumentsList,
+        argumentArray,
       );
     }
   ) || proceed;
