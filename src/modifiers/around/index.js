@@ -22,6 +22,7 @@ export function around(handler, target) {
   target = getSanitizedTarget(target);
 
   const proceed = this;
+  // prettier-ignore
   return (
 
     isFunction(handler) &&
