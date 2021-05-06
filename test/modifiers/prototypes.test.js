@@ -9,7 +9,7 @@ const { prototype: fctPrototype } = Function;
 const fctPrototypeDescriptorStringDefault = JSON.stringify(
   Object.getOwnPropertyDescriptors(fctPrototype),
 );
-const modifierNameList = ['around', 'before'];
+const modifierNameList = ['around', 'before', 'after'];
 
 afterAll(restorePrototypeDefault);
 beforeEach(enableModifierPrototypes);

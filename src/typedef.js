@@ -23,3 +23,17 @@
  * @callback beforeHandler
  *  @param {Array} argumentArray - An `Array` type which holds any passed argument.
  */
+
+/**
+ * Any modified function's `after` handler (or callback) which enables to hook
+ * into such a modified function's control flow after the original function
+ * has been invoked.
+ *
+ * Every `around` callback gets passed 2 arguments, `result` which is the
+ * return value of the before invoked original function and `argumentArray`,
+ * an `Array` type which holds any passed argument.
+ *
+ * @callback afterReturningHandler
+ *  @param {*} result - The return value of the before invoked original function.
+ *  @param {Array} argumentArray - An `Array` type which holds any passed argument.
+ */
