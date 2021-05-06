@@ -9,14 +9,14 @@ import getSanitizedTarget from '../../utils/sanitizing';
  * Once available/enabled as `Function.prototype.before`, any `Function` type can be
  * directly invoked via e.g. `[target.]myFunctionOrMethod.before(handler[, target])`.
  *
- * @param {beforeHandler} handler - The *hooked in* `before` handler.
+ * @param {beforeHandler} handler - The callback/hook provided as `before` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  Will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/casted to either an applicable type or to the `null` value.
  *
- * @returns {Function}
- *  Returns either the modified function/method or, in case of any failure, does return
- *  the context it was invoked at (which too is expected to be a `Function` type).
+ * @returns {(beforeType|*)}
+ *  Returns either the modified function/method or, in case of any failure, does
+ *  return the context it was invoked at (which too is expected to be a `Function` type).
  */
 export function before(handler, target) {
   target = getSanitizedTarget(target);
@@ -28,7 +28,7 @@ export function before(handler, target) {
     isFunction(handler) &&
     isFunction(proceed) &&
 
-    function beforeHandler(...argumentArray) {
+    function beforeType(...argumentArray) {
       // the target/context of the initial modifier/modification time
       // still can be overruled by a handler's apply/call time context.
       const context = getSanitizedTarget(this) ?? target;
@@ -45,7 +45,7 @@ export function before(handler, target) {
        */
       handler.call(context, argumentArray);
 
-      // ensure the original method's/function's arguments signature.
+      // ensure the original method's/function's arguments signature and  return value.
       return proceed.apply(context, argumentArray);
     }
   ) || proceed;
@@ -61,12 +61,12 @@ before.toString = () => 'before() { [native code] }';
  * `beforeModifier(proceed, handler[, target])`.
  *
  * @param proceed - The original/unmodified function/method.
- * @param {beforeHandler} handler - The *hooked in* `before` handler.
+ * @param {beforeHandler} handler - The callback/hook provided as `before` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  Will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/casted to either an applicable type or to the `null` value.
  *
- * @returns {Function|*}
+ * @returns {(beforeType|*)}
  *  Returns either the modified function/method or, in case of any failure,
  *  does return whatever was passed as this function's 1st argument.
  */
