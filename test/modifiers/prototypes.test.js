@@ -4,7 +4,8 @@ import {
   restoreDefault as restorePrototypeDefault,
 } from '../../src/modifiers/prototypes';
 
-const fctPrototype = Function.prototype;
+const { prototype: fctPrototype } = Function;
+
 const fctPrototypeDescriptorStringDefault = JSON.stringify(
   Object.getOwnPropertyDescriptors(fctPrototype),
 );

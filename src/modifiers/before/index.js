@@ -18,7 +18,7 @@ import getSanitizedTarget from '../../utils/sanitizing';
  *  Returns either the modified function/method or, in case of any failure, does return
  *  the context it was invoked at (which too is expected to be a `Function` type).
  */
-function before(handler, target) {
+export function before(handler, target) {
   target = getSanitizedTarget(target);
 
   const proceed = this;

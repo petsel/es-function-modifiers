@@ -1,6 +1,13 @@
 import { around } from './around';
+import { before } from './before';
 
 const { prototype: fctPrototype } = Function;
+
+const methodIndex = {
+  around,
+  before,
+};
+const methodNameList = Reflect.ownKeys(methodIndex);
 
 /**
  * A function which restores `Function.prototype`
@@ -9,7 +16,9 @@ const { prototype: fctPrototype } = Function;
  * @returns {void} No return value.
  */
 export function restoreDefault() {
-  ['around'].forEach(methodName => delete fctPrototype[methodName]);
+  methodNameList.forEach(methodName =>
+    Reflect.deleteProperty(fctPrototype, methodName),
+  );
 }
 
 /**
@@ -19,9 +28,11 @@ export function restoreDefault() {
  * @returns {void} No return value.
  */
 export function enablePrototypes() {
-  Object.defineProperty(fctPrototype, 'around', {
-    configurable: true,
-    writable: true,
-    value: around,
-  });
+  methodNameList.forEach(methodName =>
+    Reflect.defineProperty(fctPrototype, methodName, {
+      configurable: true,
+      writable: true,
+      value: methodIndex[methodName],
+    }),
+  );
 }

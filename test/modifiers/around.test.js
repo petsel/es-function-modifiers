@@ -5,7 +5,7 @@ import {
   enablePrototypes,
 } from '../../src/modifiers/prototypes';
 
-const fctPrototype = Function.prototype;
+const { prototype: fctPrototype } = Function;
 
 const aroundToStringValue = 'around() { [native code] }';
 const aroundModifierToStringValue = 'aroundModifier() { [native code] }';
