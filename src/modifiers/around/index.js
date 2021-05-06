@@ -1,7 +1,7 @@
 import isFunction from '../../utils/type-detection';
 import getSanitizedTarget from '../../utils/sanitizing';
 
-// provide "prototype ready" implementation.
+// provide *"prototype ready"* implementation.
 
 /**
  * A prototypal implementation of any `Function` type's `around` modifier/behavior.
@@ -29,8 +29,12 @@ export function around(handler, target) {
     isFunction(proceed) &&
 
     function aroundHandler(...argumentArray) {
+      // the target/context of the initial modifier/modification time
+      // still can be overruled by a handler's apply/call time context.
+      const context = getSanitizedTarget(this) ?? target;
+
       return handler.call(
-        target || getSanitizedTarget(this),
+        context,
         proceed,
         handler,
         argumentArray,
