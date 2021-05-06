@@ -66,14 +66,41 @@
 
 /**
  * Any modified function type's `afterThrowing` handler (or callback) which will
- * be invoked after the original function was called, regardless of its result.
+ * be invoked only in case of a original function's call failure.
  *
- * Every `afterThrowing` handler gets passed 2 arguments. 1st `result` which is
+ * Every `afterThrowing` handler gets passed 2 arguments. 1st `exception` which is
+ * the catched error type, raised by having `try`-ed calling the original function.
+ * And 2nd `argumentArray`, an `Array` type which holds any passed argument.
+ *
+ * @callback afterThrowingHandler
+ *  @param {Error} exception
+ *   The catched error type, raised by having `try`-ed calling the original function.
+ *  @param {Array} argumentArray
+ *   An `Array` type which holds any passed argument.
+ */
+
+/**
+ * The modified function type itself. Every modified function of this type returns
+ * either the original function's return value or, in case of the former's call failure,
+ * a custom return value which depends on any `afterThrowingHandler`'s specific implementation.
+ *
+ * @callback afterThrowingType
+ *  @returns {*}
+ *   Either the original function's return value or, in case of the former's call failure,
+ *   a custom return value which depends on any `afterThrowingHandler`'s specific implementation.
+ */
+
+/**
+ * Any modified function type's `afterFinally` handler (or callback) which
+ * will be invoked after the original function was called, regardless of
+ * either a successful or a failing invocation of the latter.
+ *
+ * Every `afterFinally` handler gets passed 2 arguments. 1st `result` which is
  * either the catched exception, raised by having called the original function
  * or the return value of the latter.
  * And 2nd `argumentArray`, an `Array` type which holds any passed argument.
  *
- * @callback afterThrowingHandler
+ * @callback afterFinallyHandler
  *  @param {(Error|*)} result
  *   Either the catched exception, raised by having called the original function
  *   or the return value of the latter.
@@ -86,7 +113,7 @@
  * either the catched exception, raised by having called the original function
  * or the return value of the latter.
  *
- * @callback afterThrowingType
+ * @callback afterFinallyType
  *  @returns {(Error|*)}
  *   Either the catched exception, raised by having called the original function
  *   or the return value of the latter.

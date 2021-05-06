@@ -56,8 +56,9 @@ export function afterThrowing(handler, target) {
         result = handler.call(context, exception, argumentArray);
       }
 
-      // always ensure a return value, ...
-      // ... either the original method's/function's return value or an error type.
+      // always ensure a return value,
+      // either the original method's/function's return value
+      // or the return value of the exception-handling `afterThrowingHandler`.
       return result;
     }
   ) || proceed;
