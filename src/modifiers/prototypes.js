@@ -1,6 +1,8 @@
 import { around } from './around';
 import { before } from './before';
 import { after } from './after';
+import { afterThrowing } from './afterThrowing';
+import { afterFinally } from './afterFinally';
 
 const { prototype: fctPrototype } = Function;
 
@@ -8,6 +10,8 @@ const methodIndex = {
   around,
   before,
   after,
+  afterThrowing,
+  afterFinally,
 };
 const methodNameList = Reflect.ownKeys(methodIndex);
 
