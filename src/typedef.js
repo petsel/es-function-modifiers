@@ -11,3 +11,15 @@
  *  @param {Function} handler - The callback's own reference.
  *  @param {Array} argumentArray - An `Array` type which holds any passed argument.
  */
+
+/**
+ * Any modified function's `before` handler (or callback) which enables to hook
+ * into such a modified function's control flow before the original function
+ * is going to be invoked.
+ *
+ * Every `before` callback gets passed exactly one argument, the `argumentArray`,
+ * an `Array` type which holds any passed argument.
+ *
+ * @callback beforeHandler
+ *  @param {Array} argumentArray - An `Array` type which holds any passed argument.
+ */
