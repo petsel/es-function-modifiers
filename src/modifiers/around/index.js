@@ -65,4 +65,3 @@ around.toString = () => 'around() { [native code] }';
 export function aroundModifier(proceed, handler, target) {
   return around.call(proceed, handler, target);
 }
-aroundModifier.toString = () => 'aroundModifier() { [native code] }';

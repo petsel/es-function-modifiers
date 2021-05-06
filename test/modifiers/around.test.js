@@ -8,7 +8,6 @@ import {
 const { prototype: fctPrototype } = Function;
 
 const aroundToStringValue = 'around() { [native code] }';
-const aroundModifierToStringValue = 'aroundModifier() { [native code] }';
 
 function createSampleType(a, b, c) {
   return {
@@ -153,17 +152,6 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
 
     expect(isFunction(aroundModifier)).toBe(true);
   });
-  test(
-    '... one expects that a `toString` operation executed at `aroundModifier`' +
-      ' does return a custom string and not the stringified implementation itself.',
-    () => {
-      // eslint-disable-next-line prefer-template
-      expect(aroundModifier + '').toBe(aroundModifierToStringValue);
-
-      expect(aroundModifier.toString()).toBe(aroundModifierToStringValue);
-      expect(String(aroundModifier)).toBe(aroundModifierToStringValue);
-    },
-  );
 
   describe(
     '### Making use of the `aroundModifier`, one can modify any passed' +

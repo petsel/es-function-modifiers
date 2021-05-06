@@ -85,5 +85,3 @@ afterThrowing.toString = () => 'afterThrowing() { [native code] }';
 export function afterThrowingModifier(proceed, handler, target) {
   return afterThrowing.call(proceed, handler, target);
 }
-afterThrowingModifier.toString = () =>
-  'afterThrowingModifier() { [native code] }';

@@ -81,4 +81,3 @@ after.toString = () => 'after() { [native code] }';
 export function afterModifier(proceed, handler, target) {
   return after.call(proceed, handler, target);
 }
-afterModifier.toString = () => 'afterModifier() { [native code] }';

@@ -73,4 +73,3 @@ before.toString = () => 'before() { [native code] }';
 export function beforeModifier(proceed, handler, target) {
   return before.call(proceed, handler, target);
 }
-beforeModifier.toString = () => 'beforeModifier() { [native code] }';
