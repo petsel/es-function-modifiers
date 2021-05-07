@@ -49,6 +49,9 @@ export function after(handler, target) {
        */
       const result = proceed.apply(context, argumentArray);
 
+      // `apply` already did decouple the `argumentArray` reference passed/applied
+      // to the original `proceed` function  from the one getting passed to `handler`.
+
       handler.call(context, result, argumentArray);
 
       // ensure the original method's/function's return value.

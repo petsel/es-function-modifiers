@@ -43,7 +43,10 @@ export function before(handler, target) {
        *  nope ... --`handler.apply(context, argumentArray);`--
        *  yep ... **`handler.call(context, argumentArray);`**
        */
-      handler.call(context, argumentArray);
+
+      // `[...argumentArray]` will decouple the `argumentArray` passed to `handler`
+      // from the one getting passed/applied to the original `proceed` function.
+      handler.call(context, [...argumentArray]);
 
       // ensure the original method's/function's arguments signature and  return value.
       return proceed.apply(context, argumentArray);
