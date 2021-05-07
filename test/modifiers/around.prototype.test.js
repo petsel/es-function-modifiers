@@ -92,7 +92,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
       const interceptorLog = { ...nullifiedInterceptorLog };
 
       test(
-        'The method, before  being modified by a prototypal `around`, works as expected.' +
+        'The method, before being modified by a prototypal `around`, works as expected.' +
           ' The settings which prove this test are initialized as expected.',
         () => {
           // a `sampleType`'s `valueOf` does always reflect

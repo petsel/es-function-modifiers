@@ -60,7 +60,7 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
       const interceptorLog = { ...nullifiedInterceptorLog };
 
       test(
-        'The method, before  being modified by `aroundModifier`, works as expected.' +
+        'The method, before being modified by `aroundModifier`, works as expected.' +
           ' The settings which prove this test are initialized as expected.',
         () => {
           // a `sampleType`'s `valueOf` does always reflect
