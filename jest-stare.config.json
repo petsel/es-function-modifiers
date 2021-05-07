@@ -1,0 +1,14 @@
+{
+  "reporters": [
+    "default",
+    [
+      "jest-stare",
+      {
+        "resultDir": "reports/test-result",
+        "reportTitle": "es-function-modifiers!",
+        "additionalResultsProcessors": ["jest-junit"],
+        "coverageLink": "reports/test-coverage/index.html"
+      }
+    ]
+  ]
+}

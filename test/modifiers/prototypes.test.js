@@ -23,7 +23,7 @@ beforeEach(enableModifierPrototypes);
 describe('## Running the Test-Suite for method-modifier prototypes ...', () => {
   describe(
     '### ... there is the possibility of enabling prototypal implementations' +
-      'and restoring again the `Function.prototype` to its standardized default.',
+      ' and restoring again the `Function.prototype` to its standardized default.',
     () => {
       test('One expects that `enablePrototypes` exists and is itself a `Function` type.', () => {
         expect(enableModifierPrototypes).not.toBeNull();

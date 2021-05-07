@@ -15,7 +15,7 @@ describe('## Running the Sanitizing Test-Suite with ...', () => {
 
     test(
       '...`getSanitizedTarget` has to return an applicable target/context,' +
-        'thus either an object type or a primitive value or the null value.',
+        ' thus either an object type or a primitive value or the `null` value.',
       () => {
         /* eslint-disable no-void */
         expect(getSanitizedTarget(void 0)).not.toBeUndefined();

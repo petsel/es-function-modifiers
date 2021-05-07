@@ -31,7 +31,7 @@
     "format": "prettier --write \"**/*.{md,yaml,yml,js,json}\"",
     "test": "LOG_LEVEL=debug jest --verbose",
     "test:coverage": "LOG_LEVEL=debug jest --coverage --coverageReporters json text text-summary",
-    "docufy": "jest --coverage --coverageReporters html json text text-summary && node_modules/.bin/jsdoc --configure jsdoc.config.json --verbose",
+    "docufy": "jest --coverage --coverageDirectory reports/test-coverage --coverageReporters html json text text-summary --config jest-stare.config.json && node_modules/.bin/jsdoc --configure jsdoc.config.json --verbose",
     "qa": "npm run lint:fix && npm run format && npm run test && npm run docufy"
   },
   "devDependencies": {
@@ -47,6 +47,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.3.6",
     "jest": "^26.6.3",
+    "jest-stare": "^2.2.2",
     "jsdoc": "~3.6.6",
     "minami": "^1.2.3",
     "prettier": "2.2.1",

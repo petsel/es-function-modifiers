@@ -56,8 +56,8 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
   );
 
   describe(
-    '### Making use of the prototypal *around*, one can modify an' +
-      " object's method and intercept this modified method's control flow.",
+    '### Making use of the prototypal *around*, one can modify the operated function type and,' +
+      " as for this scenario, can intercept this original function's control flow entirely.",
     () => {
       const initialArgsList = [9, 8, 7];
       const interceptorArgsList = [1, 2, 3];
@@ -93,7 +93,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
 
       test(
         'The method, before  being modified by a prototypal `around`, works as expected.' +
-          'The settings which prove this test are initialized as expected.',
+          ' The settings which prove this test are initialized as expected.',
         () => {
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
@@ -217,12 +217,12 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
       }
       const invalidHandler = { invalid: 'handler' };
 
-      test("A modified function/method has a custom return value which depends on any `aroundHandler`'s specific implementation.", () => {
+      test('A modified function/method has a custom return value which depends on any `aroundHandler`s specific implementation.', () => {
         const modifiedType = sum.around(aroundSumTest, invalidHandler);
 
         // summing it up, ...
         // ... but with intercepted and checked arguments ...
-        // ... and a custom return value which depends on any `aroundHandler`'s specific implementation.
+        // ... and a custom return value which depends on any `aroundHandler`s specific implementation.
 
         // ... just passing it through ... and returning the expected summed-up result.
         expect(modifiedType(1, 2, 3)).toBe(6);
@@ -235,11 +235,11 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
 
       describe(
         '#### Creating a modifier either can be successful or can fail,' +
-          "but for the latter it follows some predefined/documented path's.",
+          " but for the latter it follows some predefined/documented path's.",
         () => {
           test(
-            '`around`, in case of any failure, returns the context it was' +
-              ' invoked at (which too is most commonly expected to be a `Function` type).',
+            '`around`, in case of any failure, returns the context it was invoked at' +
+              ' (which too, but not necessarily, is expected to be a `Function` type).',
             () => {
               const unmodifiedType = sum.around(invalidHandler);
 

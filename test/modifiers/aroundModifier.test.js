@@ -24,8 +24,8 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
   });
 
   describe(
-    '### Making use of the `aroundModifier`, one can modify any passed' +
-      " function type and, for this test case, intercept a method's control flow.",
+    '### Making use of the `aroundModifier`, one can modify any passed function type and,' +
+      " as for this scenario, can intercept this original function's control flow entirely.",
     () => {
       const initialArgsList = [9, 8, 7];
       const interceptorArgsList = [1, 2, 3];
@@ -61,7 +61,7 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
 
       test(
         'The method, before  being modified by `aroundModifier`, works as expected.' +
-          'The settings which prove this test are initialized as expected.',
+          ' The settings which prove this test are initialized as expected.',
         () => {
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
