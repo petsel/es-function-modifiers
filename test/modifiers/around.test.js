@@ -94,7 +94,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
 
       test(
         'The method, before  being modified by a prototypal `around`, works as expected.' +
-          'The settings which proof this test are initialized as expected.',
+          'The settings which prove this test are initialized as expected.',
         () => {
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
@@ -115,7 +115,10 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
       );
       test(
         'Invoking the modified method allows the `aroundHandler`' +
-          " to intercept this modified method's control flow in the expected way.",
+          " to intercept this modified method's control flow in the expected way.\n\n" +
+          ' Every `around` handler gets passed 3 arguments, 1st `proceed` which is the' +
+          " original function, 2nd `handler` which is the `around` handler's own reference." +
+          ' And 3rd `argumentArray`, an `Array` type which holds any passed argument.',
         () => {
           // modify `setABC` via a prototypal `around`.
           sampleType.setABC = sampleType.setABC.around(
@@ -139,6 +142,128 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
           );
 
           expect(interceptorLog).toStrictEqual(expectedInterceptorLog);
+        },
+      );
+
+      test(
+        'The `thisArgs` context of a modified method can/should be set at the' +
+          " initial modifier/modification time as the `around` method's second" +
+          ' argument. Nevertheless invoking a modified method via `call`/`apply`' +
+          " and passing a valid `thisArgs` does overrule a modified method's" +
+          ' initially bound context at exactly this current `call`/`apply` time.',
+        () => {
+          function exposeContext() {
+            return this;
+          }
+          function aroundContextHandler(
+            proceed /* , handler, argumentArray */,
+          ) {
+            return proceed.call(this);
+          }
+          const initialContext = { context: 'initial' };
+          const callTimeContext = { context: 'calltime' };
+
+          const exposeModifiedContext = exposeContext.around(
+            aroundContextHandler,
+            initialContext,
+          );
+
+          // initial
+          expect(exposeModifiedContext()).toBe(initialContext);
+          // calltime
+          expect(exposeModifiedContext.call(callTimeContext)).toBe(
+            callTimeContext,
+          );
+
+          // back to initial
+          expect(exposeModifiedContext()).toBe(initialContext);
+
+          // misc positive initial tests
+          // eslint-disable-next-line no-void
+          expect(exposeModifiedContext.call(void 0)).toBe(initialContext);
+          expect(exposeModifiedContext.call(null)).toBe(initialContext);
+
+          // misc negated initial tests
+          expect(exposeModifiedContext.call(0)).not.toBe(initialContext);
+          expect(exposeModifiedContext.call(0)).toBe(0);
+
+          expect(exposeModifiedContext.call('')).not.toBe(initialContext);
+          expect(exposeModifiedContext.call('')).toBe('');
+
+          expect(exposeModifiedContext.call(false)).not.toBe(initialContext);
+          expect(exposeModifiedContext.call(false)).toBe(false);
+        },
+      );
+
+      function sum(a, b, c) {
+        return a + b + c;
+      }
+      function aroundSumTest(proceed, handler, argumentArray) {
+        const checkProceed = () => proceed === sum;
+        const checkHandler = () => handler === aroundSumTest;
+        const checkArgument = () =>
+          Array.isArray(argumentArray) &&
+          argumentArray.length >= 1 &&
+          argumentArray.every(value => Number.isFinite(value));
+
+        const isValidArguments = [
+          checkProceed,
+          checkHandler,
+          checkArgument,
+        ].every(fct => fct());
+
+        return isValidArguments
+          ? proceed(...argumentArray)
+          : proceed(9, 10, 11);
+      }
+      const invalidHandler = { invalid: 'handler' };
+
+      test("A modified function/method has a custom return value which depends on any `aroundHandler`'s specific implementation.", () => {
+        const modifiedType = sum.around(aroundSumTest, invalidHandler);
+
+        // summing it up, ...
+        // ... but with intercepted and checked arguments ...
+        // ... and a custom return value which depends on any `aroundHandler`'s specific implementation.
+
+        // ... just passing it through ... and returning the expected summed-up result.
+        expect(modifiedType(1, 2, 3)).toBe(6);
+        expect(modifiedType(11, 12, 13)).toBe(36);
+
+        // ... intercepted with invalid arguments ... and a manipulated and fixated return value.
+        expect(modifiedType()).toBe(30);
+        expect(modifiedType('1', 2, 3)).toBe(30);
+      });
+
+      describe(
+        '#### Creating a modifier either can be successful or can fail,' +
+          "but for the latter it follows some predefined/documented path's.",
+        () => {
+          test(
+            '`around`, in case of any failure, returns the context it was' +
+              ' invoked at (which too is most commonly expected to be a `Function` type).',
+            () => {
+              const unmodifiedType = sum.around(invalidHandler);
+
+              expect(isFunction(unmodifiedType)).toBe(true);
+              expect(unmodifiedType).toStrictEqual(sum);
+
+              const unmodifiedOddity = sum.around.call(
+                invalidHandler,
+                aroundSumTest,
+              );
+
+              expect(isFunction(unmodifiedOddity)).toBe(false);
+              expect(unmodifiedOddity).toStrictEqual(invalidHandler);
+            },
+          );
+          test('`around`, in case of success, returns a modified function/method.', () => {
+            const modifiedType = sum.around(aroundSumTest, invalidHandler);
+
+            expect(modifiedType).not.toBe(invalidHandler);
+            expect(modifiedType).not.toBe(sum);
+
+            expect(isFunction(modifiedType)).toBe(true);
+          });
         },
       );
     },
@@ -191,7 +316,7 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
 
       test(
         'The method, before  being modified by `aroundModifier`, works as expected.' +
-          'The settings which proof this test are initialized as expected.',
+          'The settings which prove this test are initialized as expected.',
         () => {
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
@@ -212,7 +337,10 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
       );
       test(
         'Invoking the modified method allows the `aroundHandler`' +
-          " to intercept this modified method's control flow in the expected way.",
+          " to intercept this modified method's control flow in the expected way.\n\n" +
+          ' Every `around` handler gets passed 3 arguments, 1st `proceed` which is the' +
+          " original function, 2nd `handler` which is the `around` handler's own reference." +
+          ' And 3rd `argumentArray`, an `Array` type which holds any passed argument.',
         () => {
           // modify `setABC` via a prototypal `around`.
           sampleType.setABC = aroundModifier(
