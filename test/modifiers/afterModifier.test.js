@@ -72,9 +72,6 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
           expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
 
           expect(handlerLog).toStrictEqual(initialHandlerLog);
-
-          // `[...argumentArray]` will decouple the `argumentArray` passed to `handler`
-          // from the one getting passed/applied to the original `proceed` function.
         },
       );
       test(
@@ -104,7 +101,7 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
             updatingArgsList,
           );
 
-          // remained a references ... as expected.
+          // remained a reference ... as expected.
           expect(handlerLog.target).toBe(sampleType);
 
           // not anymore a reference ... which had to be proved ...
