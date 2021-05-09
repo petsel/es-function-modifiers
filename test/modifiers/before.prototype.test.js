@@ -149,7 +149,7 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
           // ... therefore countercheck with the set-up from before ...
           expect(expectedHandlerLog.argsList).toBe(manipulatedArgsList);
 
-          // strict equality finally proves the correct before handling.
+          // strict equality finally proves the correct `before` handling.
           expect(handlerLog).toStrictEqual(expectedHandlerLog);
         },
       );

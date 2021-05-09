@@ -87,7 +87,7 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
           " original function, 2nd `handler` which is the `around` handler's own reference." +
           ' And 3rd `argumentArray`, an `Array` type which holds any passed argument.',
         () => {
-          // modify `setABC` via a prototypal `around`.
+          // modify `setABC` via the non prototypal `aroundModifier`.
           sampleType.setABC = aroundModifier(
             sampleType.setABC,
             aroundHandler,

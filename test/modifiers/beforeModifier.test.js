@@ -88,7 +88,7 @@ describe('## Running the Test-Suite for the *before* modifier implementations ..
         'Invoking the modified method allows the `beforeHandler` to access the' +
           " original function's arguments just as a shallow-copied single `Array` type.",
         () => {
-          // modify `setABC` via a prototypal `before`.
+          // modify `setABC` via the non prototypal `beforeModifier`.
           sampleType.setABC = beforeModifier(
             sampleType.setABC,
             beforeHandler,
@@ -118,7 +118,7 @@ describe('## Running the Test-Suite for the *before* modifier implementations ..
           // ... therefore countercheck with the set-up from before ...
           expect(expectedHandlerLog.argsList).toBe(manipulatedArgsList);
 
-          // strict equality finally proves the correct before handling.
+          // strict equality finally proves the correct `before` handling.
           expect(handlerLog).toStrictEqual(expectedHandlerLog);
         },
       );
