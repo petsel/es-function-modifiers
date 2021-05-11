@@ -91,58 +91,109 @@ describe('## Running the Test-Suite for the *afterThrowing* modifier implementat
           expect(handlerLog).toStrictEqual(initialHandlerLog);
         },
       );
-      test(
-        'Invoking the modified method and raising an exception triggers the' +
-          ' exception handling of the `afterThrowingHandler`. The latter now can' +
-          ' access 1st the raised `exception` (the reason/cause of the invocation failure)' +
-          ' and 2nd the arguments as a shallow-copied single `Array` type.',
+
+      const finiteTotal = (a, b, c) => {
+        const value = a + b + c;
+        if (!Number.isFinite(value)) {
+          throw new TypeError('+++ wrong argument types +++');
+        }
+        return value;
+      };
+      const handleTotalFailure = (exception, argumentArray) => ({
+        exception,
+        argumentArray,
+      });
+      const modifiedTotal = afterThrowingModifier(
+        finiteTotal,
+        handleTotalFailure,
+      );
+
+      describe(
+        '#### Invoking the modified method and raising an exception' +
+          ' triggers the `afterThrowingHandler` based exception handling.',
         () => {
-          // modify `valueOf` via the non prototypal `afterThrowingModifier`.
-          sampleType.valueOf = afterThrowingModifier(
-            sampleType.valueOf,
-            afterThrowingHandler,
-            sampleType,
+          test(
+            'Being invoked by the exception handling `afterThrowingHandler` can' +
+              ' access 1st the raised `exception` (the reason/cause of the invocation failure)' +
+              ' and 2nd the arguments as a shallow-copied single `Array` type.',
+            () => {
+              // modify `valueOf` via the non prototypal `afterThrowingModifier`.
+              sampleType.valueOf = afterThrowingModifier(
+                sampleType.valueOf,
+                afterThrowingHandler,
+                sampleType,
+              );
+              // modify `setABC` via the non prototypal `afterThrowingModifier`.
+              sampleType.setABC = afterThrowingModifier(
+                sampleType.setABC,
+                afterThrowingHandler,
+                sampleType,
+              );
+
+              // proof of both methods are being modified.
+              expect(sampleType.valueOf).not.toBe(unmodifiedGetter);
+              expect(sampleType.setABC).not.toBe(unmodifiedSetter);
+
+              // proof of not having already run
+              // into an `afterThrowing` failure handling.
+              expect(Object.values(sampleType.valueOf())).toStrictEqual(
+                initialArgsList,
+              );
+              expect(handlerLog).toStrictEqual(initialHandlerLog);
+
+              // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
+              // - invoke the modified method
+              // - and raise an error hereby.
+              sampleType.setABC(...updatingArgsList);
+
+              // since all arguments were set despite the raised exception,
+              // a `sampleType`'s `valueOf` will equally reflect the
+              // most recent changes of its locally scoped variables.
+              expect(Object.values(sampleType.valueOf())).toStrictEqual(
+                updatingArgsList,
+              );
+
+              // remained a reference ... as expected.
+              expect(handlerLog.target).toBe(sampleType);
+
+              // not anymore a reference ... which had to be proved ...
+              expect(handlerLog.argsList).not.toBe(updatingArgsList);
+              // ... therefore countercheck with the set-up from before ...
+              expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
+
+              // strict equality finally proves the correct `afterThrowing` handling.
+              expect(handlerLog).toStrictEqual(expectedHandlerLog);
+            },
           );
-          // modify `setABC` via the non prototypal `afterThrowingModifier`.
-          sampleType.setABC = afterThrowingModifier(
-            sampleType.setABC,
-            afterThrowingHandler,
-            sampleType,
+          test(
+            'Being invoked by the exception handling the `afterThrowingHandler`s' +
+              ' return value becomes the the return value of the modified function.',
+            () => {
+              const argsList = [1, 2, '3'];
+              const result = modifiedTotal(...argsList);
+
+              const { name, message } = result.exception;
+              const { argumentArray } = result;
+
+              expect(name).toBe('TypeError');
+              expect(message).toBe('+++ wrong argument types +++');
+
+              expect(Array.isArray(argumentArray)).toBe(true);
+
+              // never a reference ...
+              expect(argumentArray).not.toBe(argsList);
+              // ... but always with structural equality.
+              expect(argumentArray).toStrictEqual(argsList);
+            },
           );
-
-          // proof of both methods are being modified.
-          expect(sampleType.valueOf).not.toBe(unmodifiedGetter);
-          expect(sampleType.setABC).not.toBe(unmodifiedSetter);
-
-          // proof of not having already run
-          // into an `afterThrowing` failure handling.
-          expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
-          );
-          expect(handlerLog).toStrictEqual(initialHandlerLog);
-
-          // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
-          // - invoke the modified method
-          // - and raise an error hereby.
-          sampleType.setABC(...updatingArgsList);
-
-          // since all arguments were set despite the raised exception,
-          // a `sampleType`'s `valueOf` will equally reflect the
-          // most recent changes of its locally scoped variables.
-          expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            updatingArgsList,
-          );
-
-          // remained a reference ... as expected.
-          expect(handlerLog.target).toBe(sampleType);
-
-          // not anymore a reference ... which had to be proved ...
-          expect(handlerLog.argsList).not.toBe(updatingArgsList);
-          // ... therefore countercheck with the set-up from before ...
-          expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
-
-          // strict equality finally proves the correct `afterThrowing` handling.
-          expect(handlerLog).toStrictEqual(expectedHandlerLog);
+        },
+      );
+      test(
+        'The return value of a modified function which does not fail at call time' +
+          ' is the very return value of the unmodified (original) function.',
+        () => {
+          expect(modifiedTotal(1, 2, 3)).toBe(finiteTotal(1, 2, 3));
+          expect(modifiedTotal(1, 2, 3)).toBe(6);
         },
       );
     },
