@@ -1,7 +1,7 @@
 {
   "name": "function-modifiers",
   "version": "0.0.9",
-  "description": "Some non prototypal (static) implementations of possibly desirable JavaScript/EcmaScript function modifiers.",
+  "description": "es-function-control-flow-modifiers :: Prototypal and non-prototypal implementations of possibly desirable JavaScript/ECMAScript function/method-modifiers which allow the interception, introspection and manipulation of a function's/method's control flow in terms of its arguments, return value and context at such a modified function's/method's call/apply/execution time.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/petsel/es-function-modifiers.git"
