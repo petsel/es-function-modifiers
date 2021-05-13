@@ -317,7 +317,7 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
           " and as long as the original function's/method's return value is" +
           ' exclusively either a primitive or a nullish value.',
         () => {
-          const modifiedType = sum.after(afterSumTest, invalidHandler);
+          const modifiedType = sum.afterThrowing(afterSumTest, invalidHandler);
 
           // summing it up, ...
           expect(modifiedType(1, 2, 3)).toBe(sum(1, 2, 3));

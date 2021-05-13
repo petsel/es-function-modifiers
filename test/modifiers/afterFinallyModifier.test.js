@@ -138,10 +138,6 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
             ' from the before executed original function both its return value' +
             ' (result) and its arguments as a shallow-copied single `Array` type.',
           () => {
-            expect(Object.values(sampleType.valueOf())).toStrictEqual(
-              initialArgsList,
-            );
-
             // invoke the modified method,
             // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
             sampleType.setABC(...successfullyUpdatingArgsList);
@@ -189,8 +185,8 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
             // restore the `handlerLog` to its default value.
             Object.assign(handlerLog, initialHandlerLog);
 
-            // proof of not having already run
-            // into an `afterThrowing` failure handling.
+            // proof of not having already run into an
+            // `afterFinally` specific failure handling.
             expect(Object.values(sampleType.valueOf())).toStrictEqual(
               initialArgsList,
             );
@@ -218,7 +214,7 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
               failingUpdatingArgsList,
             );
 
-            // strict equality finally proves the correct `afterThrowing` handling.
+            // strict equality finally proves the correct `afterFinally` handling.
             expect(handlerLog).toStrictEqual(expectedExceptionHandlerLog);
           },
         );
