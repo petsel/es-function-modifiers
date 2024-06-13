@@ -1,5 +1,4 @@
 import isFunction from '../../utils/type-detection';
-import getSanitizedTarget from '../../utils/sanitizing';
 
 // provide *"prototype ready"* implementation.
 
@@ -9,17 +8,20 @@ import getSanitizedTarget from '../../utils/sanitizing';
  * Once available/enabled as `Function.prototype.afterThrowing`, any `Function` type can be
  * directly invoked via e.g. `[target.]myFunctionOrMethod.afterThrowing(handler[, target])`.
  *
- * @param {afterThrowingHandler} handler - The callback/hook provided as `afterThrowing` handler.
+ * @this {CallableFunction}
+ *  The to be modified function.
+ @param {afterThrowingHandler} handler
+  The callback/hook provided as `afterThrowing` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(afterThrowingType|*)}
  *  Returns either the modified function/method or, in case of any failure, does
  *  return the context it was invoked at (which too is expected to be a `Function` type).
  */
 export function afterThrowing(handler, target) {
-  target = getSanitizedTarget(target);
+  target = target ?? null;
 
   const proceed = this;
   // prettier-ignore
@@ -28,16 +30,16 @@ export function afterThrowing(handler, target) {
     isFunction(handler) &&
     isFunction(proceed) &&
 
-    function afterThrowingType(...argumentArray) {
+    function afterThrowingType(...args) {
       // the target/context of the initial modifier/modification time
       // still can be overruled by a handler's apply/call time context.
-      const context = getSanitizedTarget(this) ?? target;
+      const context = (this ?? null) ?? target;
 
       let result;
       try {
         // try the invocation of the original function.
 
-        result = proceed.apply(context, argumentArray);
+        result = proceed.apply(context, args);
 
       } catch (exception) {
         /**
@@ -48,12 +50,12 @@ export function afterThrowing(handler, target) {
          *  Never `apply` the arguments, but always provide
          *  them within/as a single array of arguments.
          *
-         *  nope ... --`handler.apply(context, [exception, ...argumentArray]);`--
-         *  nope ... --`handler.call(context, exception, ...argumentArray);`--
+         *  nope ... --`handler.apply(context, [exception, ...args]);`--
+         *  nope ... --`handler.call(context, exception, ...args);`--
          *
-         *  yep ... **`handler.call(context, exception, argumentArray);`**
+         *  yep ... **`handler.call(context, exception, args);`**
          */
-        result = handler.call(context, exception, argumentArray);
+        result = handler.call(context, exception, ...args);
       }
 
       // always ensure a return value,
@@ -77,7 +79,7 @@ afterThrowing.toString = () => 'afterThrowing() { [native code] }';
  * @param {afterThrowingHandler} handler - The callback/hook provided as `afterThrowing` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(afterThrowingType|*)}
  *  Returns either the modified function/method or, in case of any failure,

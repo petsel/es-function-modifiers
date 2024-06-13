@@ -1,5 +1,4 @@
 import isFunction from '../../utils/type-detection';
-import getSanitizedTarget from '../../utils/sanitizing';
 
 // provide *"prototype ready"* implementation.
 
@@ -9,17 +8,20 @@ import getSanitizedTarget from '../../utils/sanitizing';
  * Once available/enabled as `Function.prototype.afterFinally`, any `Function` type can be
  * directly invoked via e.g. `[target.]myFunctionOrMethod.afterFinally(handler[, target])`.
  *
- * @param {afterFinallyHandler} handler - The callback/hook provided as `afterFinally` handler.
+ * @this {CallableFunction}
+ *  The to be modified function.
+ * @param {afterFinallyHandler} handler
+ *  The callback/hook provided as `afterFinally` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(afterFinallyType|*)}
  *  Returns either the modified function/method or, in case of any failure, does
  *  return the context it was invoked at (which too is expected to be a `Function` type).
  */
 export function afterFinally(handler, target) {
-  target = getSanitizedTarget(target);
+  target = target ?? null;
 
   const proceed = this;
   // prettier-ignore
@@ -28,17 +30,17 @@ export function afterFinally(handler, target) {
     isFunction(handler) &&
     isFunction(proceed) &&
 
-    function afterFinallyType(...argumentArray) {
+    function afterFinallyType(...args) {
       // the target/context of the initial modifier/modification time
       // still can be overruled by a handler's apply/call time context.
-      const context = getSanitizedTarget(this) ?? target;
+      const context = (this ?? null) ?? target;
 
       let result;
       let error;
       try {
         // try the invocation of the original function.
 
-        result = proceed.apply(context, argumentArray);
+        result = proceed.apply(context, args);
 
       } catch (exception) {
 
@@ -60,7 +62,7 @@ export function afterFinally(handler, target) {
        */
       result = (error || result);
 
-      handler.call(context, result, argumentArray);
+      handler.call(context, result, ...args);
 
       // always ensure a return value, ...
       // ... either the original method's/function's return value or an error type.
@@ -82,7 +84,7 @@ afterFinally.toString = () => 'afterFinally() { [native code] }';
  * @param {afterFinallyHandler} handler - The callback/hook provided as `afterFinally` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(afterFinallyType|*)}
  *  Returns either the modified function/method or, in case of any failure,

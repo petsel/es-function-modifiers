@@ -67,15 +67,15 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
       ' access 1st the raised `exception` (the reason/cause of the invocation failure)' +
       ' and 2nd the arguments as a shallow-copied single `Array` type.',
     () => {
-      const initialArgsList = [9, 8, 7];
-      const updatingArgsList = [1, 2, 3];
+      const initialArgs = [9, 8, 7];
+      const updatingArgs = [1, 2, 3];
 
-      const sampleType = createSampleType(...initialArgsList);
+      const sampleType = createSampleType(...initialArgs);
       const unmodifiedGetter = sampleType.valueOf;
       const unmodifiedSetter = sampleType.setABC;
 
       // *hooked-in* `afterThrowing` handler.
-      function afterThrowingHandler(exception, argsList) {
+      function afterThrowingHandler(exception, ...args) {
         const target = this;
 
         // eslint-disable-next-line no-use-before-define
@@ -84,7 +84,7 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
           errorMessage: exception.message,
           errorType: exception.name,
           errorString: exception.toString(),
-          argsList,
+          args,
           isHandledAfterThrowing: true,
         });
 
@@ -97,7 +97,7 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
         errorType: 'TypeError',
         errorString:
           'TypeError: The argument types did not match, but were assigned anyhow.',
-        argsList: updatingArgsList,
+        args: updatingArgs,
         isHandledAfterThrowing: true,
       };
       const initialHandlerLog = {
@@ -105,7 +105,7 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
         errorMessage: '',
         errorType: '',
         errorString: '',
-        argsList: null,
+        args: null,
         isHandledAfterThrowing: false,
       };
       const handlerLog = { ...initialHandlerLog };
@@ -117,12 +117,12 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // references ... twice ... as expected.
           expect(expectedHandlerLog.target).toBe(sampleType);
-          expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
+          expect(expectedHandlerLog.args).toBe(updatingArgs);
 
           expect(handlerLog).toStrictEqual(initialHandlerLog);
         },
@@ -135,9 +135,9 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
         }
         return value;
       };
-      const handleTotalFailure = (exception, argumentArray) => ({
+      const handleTotalFailure = (exception, ...args) => ({
         exception,
-        argumentArray,
+        argumentArray: args,
       });
 
       describe(
@@ -168,29 +168,29 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
               // proof of not having already run
               // into an `afterThrowing` failure handling.
               expect(Object.values(sampleType.valueOf())).toStrictEqual(
-                initialArgsList,
+                initialArgs,
               );
               expect(handlerLog).toStrictEqual(initialHandlerLog);
 
               // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
               // - invoke the modified method
               // - and raise an error hereby.
-              sampleType.setABC(...updatingArgsList);
+              sampleType.setABC(...updatingArgs);
 
               // since all arguments were set despite the raised exception,
               // a `sampleType`'s `valueOf` will equally reflect the
               // most recent changes of its locally scoped variables.
               expect(Object.values(sampleType.valueOf())).toStrictEqual(
-                updatingArgsList,
+                updatingArgs,
               );
 
               // remained a reference ... as expected.
               expect(handlerLog.target).toBe(sampleType);
 
               // not anymore a reference ... which had to be proved ...
-              expect(handlerLog.argsList).not.toBe(updatingArgsList);
+              expect(handlerLog.args).not.toBe(updatingArgs);
               // ... therefore countercheck with the set-up from before ...
-              expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
+              expect(expectedHandlerLog.args).toBe(updatingArgs);
 
               // strict equality finally proves the correct `afterThrowing` handling.
               expect(handlerLog).toStrictEqual(expectedHandlerLog);
@@ -200,11 +200,11 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
             'Being invoked by the exception handling the `afterThrowingHandler`s' +
               ' return value becomes the the return value of the modified function.',
             () => {
-              const argsList = [1, 2, '3'];
+              const args = [1, 2, '3'];
               const modifiedTotal = finiteTotal.afterThrowing(
                 handleTotalFailure,
               );
-              const result = modifiedTotal(...argsList);
+              const result = modifiedTotal(...args);
 
               const { name, message } = result.exception;
               const { argumentArray } = result;
@@ -215,9 +215,9 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
               expect(Array.isArray(argumentArray)).toBe(true);
 
               // never a reference ...
-              expect(argumentArray).not.toBe(argsList);
+              expect(argumentArray).not.toBe(args);
               // ... but always with structural equality.
-              expect(argumentArray).toStrictEqual(argsList);
+              expect(argumentArray).toStrictEqual(args);
             },
           );
         },
@@ -243,7 +243,7 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
           function raiseException() {
             throw new Error('`thisArgs` test exception');
           }
-          function afterContextHandler(/* argumentArray */) {
+          function afterContextHandler(/* exception, ...args */) {
             // eslint-disable-next-line no-use-before-define
             callTimeLogList.push(this);
           }
@@ -302,10 +302,10 @@ describe('## Running the Test-Suite for the prototypal *afterThrowing* modifier 
       function sum(a, b, c) {
         return a + b + c;
       }
-      function afterSumTest(result, argumentArray) {
+      function afterSumTest(result, ...args) {
         // return an own, manipulated, summed-up result which will not show any effect.
 
-        result = sum(...argumentArray.map(value => value * 10));
+        result = sum(...args.map(value => value * 10));
         return result;
       }
       const invalidHandler = { invalid: 'handler' };

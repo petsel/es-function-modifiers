@@ -35,22 +35,22 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
       ' *return value* (result) or the *raised exception* in case the before executed original function failed.' +
       " The original function's arguments get passed 2nd as a shallow-copied single `Array` type.",
     () => {
-      const initialArgsList = [9, 8, 7];
+      const initialArgs = [9, 8, 7];
 
-      const successfullyUpdatingArgsList = [1, 2, 3];
-      const failingUpdatingArgsList = [1, 2];
+      const successfullyUpdatingArgs = [1, 2, 3];
+      const failingUpdatingArgs = [1, 2];
 
-      const sampleType = createSampleType(...initialArgsList);
+      const sampleType = createSampleType(...initialArgs);
       const unmodifiedSetter = sampleType.setABC;
 
       // *hooked-in* `afterFinally` handler.
-      function afterFinallyHandler(resultOrException, argsList) {
+      function afterFinallyHandler(resultOrException, ...args) {
         const target = this;
 
         // eslint-disable-next-line no-use-before-define
         Object.assign(handlerLog, {
           target,
-          argsList,
+          args,
         });
 
         if (resultOrException instanceof Error) {
@@ -72,7 +72,7 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
         errorMessage: '',
         errorType: '',
         errorString: '',
-        argsList: successfullyUpdatingArgsList,
+        args: successfullyUpdatingArgs,
         isHandledAfterReturning: true,
         isHandledAfterThrowing: false,
       };
@@ -83,7 +83,7 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
         errorType: 'ReferenceError',
         errorString:
           'ReferenceError: The arguments signature did not match, but arguments were assigned anyhow.',
-        argsList: failingUpdatingArgsList,
+        args: failingUpdatingArgs,
         isHandledAfterReturning: false,
         isHandledAfterThrowing: true,
       };
@@ -92,13 +92,13 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
         errorMessage: '',
         errorType: '',
         errorString: '',
-        argsList: null,
+        args: null,
         isHandledAfterReturning: false,
         isHandledAfterThrowing: false,
       };
       const handlerLog = { ...initialHandlerLog };
 
-      // modify `setABC` via the non prototypal `afterFinallyModifier`.
+      // modify `setABC` via the non-prototypal `afterFinallyModifier`.
       sampleType.setABC = afterFinallyModifier(
         sampleType.setABC,
         afterFinallyHandler,
@@ -114,19 +114,15 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // references ... twice ... as expected.
           expect(expectedSuccessHandlerLog.target).toBe(sampleType);
-          expect(expectedSuccessHandlerLog.argsList).toBe(
-            successfullyUpdatingArgsList,
-          );
+          expect(expectedSuccessHandlerLog.args).toBe(successfullyUpdatingArgs);
           // references ... twice ... as expected.
           expect(expectedExceptionHandlerLog.target).toBe(sampleType);
-          expect(expectedExceptionHandlerLog.argsList).toBe(
-            failingUpdatingArgsList,
-          );
+          expect(expectedExceptionHandlerLog.args).toBe(failingUpdatingArgs);
 
           expect(handlerLog).toStrictEqual(initialHandlerLog);
         },
@@ -140,22 +136,22 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
           () => {
             // invoke the modified method,
             // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
-            sampleType.setABC(...successfullyUpdatingArgsList);
+            sampleType.setABC(...successfullyUpdatingArgs);
 
             // a `sampleType`'s `valueOf` will equally reflect the
             // most recent changes of its locally scoped variables.
             expect(Object.values(sampleType.valueOf())).toStrictEqual(
-              successfullyUpdatingArgsList,
+              successfullyUpdatingArgs,
             );
 
             // remained a reference ... as expected.
             expect(handlerLog.target).toBe(sampleType);
 
             // not anymore a reference ... which had to be proved ...
-            expect(handlerLog.argsList).not.toBe(successfullyUpdatingArgsList);
+            expect(handlerLog.args).not.toBe(successfullyUpdatingArgs);
             // ... therefore countercheck with the set-up from before ...
-            expect(expectedSuccessHandlerLog.argsList).toBe(
-              successfullyUpdatingArgsList,
+            expect(expectedSuccessHandlerLog.args).toBe(
+              successfullyUpdatingArgs,
             );
 
             // strict equality finally proves the correct `after` handling.
@@ -181,38 +177,36 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
             ' and its arguments as a shallow-copied single `Array` type.',
           () => {
             // restore the `sampleType`s state to its initial value.
-            sampleType.setABC(...initialArgsList);
+            sampleType.setABC(...initialArgs);
             // restore the `handlerLog` to its default value.
             Object.assign(handlerLog, initialHandlerLog);
 
             // proof of not having already run into an
             // `afterFinally` specific failure handling.
             expect(Object.values(sampleType.valueOf())).toStrictEqual(
-              initialArgsList,
+              initialArgs,
             );
             expect(handlerLog).toStrictEqual(initialHandlerLog);
 
             // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
             // - invoke the modified method
             // - and raise an error hereby.
-            sampleType.setABC(...failingUpdatingArgsList);
+            sampleType.setABC(...failingUpdatingArgs);
 
             // since all arguments were set despite the raised exception,
             // a `sampleType`'s `valueOf` will equally reflect the
             // most recent changes of its locally scoped variables.
             expect(Object.values(sampleType.valueOf())).toStrictEqual(
-              failingUpdatingArgsList.concat('no argument provided'),
+              failingUpdatingArgs.concat('no argument provided'),
             );
 
             // remained a reference ... as expected.
             expect(handlerLog.target).toBe(sampleType);
 
             // not anymore a reference ... which had to be proved ...
-            expect(handlerLog.argsList).not.toBe(failingUpdatingArgsList);
+            expect(handlerLog.args).not.toBe(failingUpdatingArgs);
             // ... therefore countercheck with the set-up from before ...
-            expect(expectedExceptionHandlerLog.argsList).toBe(
-              failingUpdatingArgsList,
-            );
+            expect(expectedExceptionHandlerLog.args).toBe(failingUpdatingArgs);
 
             // strict equality finally proves the correct `afterFinally` handling.
             expect(handlerLog).toStrictEqual(expectedExceptionHandlerLog);
