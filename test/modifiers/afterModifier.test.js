@@ -28,31 +28,31 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
       ' as for this scenario, can access from the before executed original function both' +
       ' its return value (`result`) and its arguments as a shallow-copied single `Array` type.',
     () => {
-      const initialArgsList = [9, 8, 7];
-      const updatingArgsList = [1, 2, 3];
+      const initialArgs = [9, 8, 7];
+      const updatingArgs = [1, 2, 3];
 
-      const sampleType = createSampleType(...initialArgsList);
+      const sampleType = createSampleType(...initialArgs);
       const unmodifiedSetter = sampleType.setABC;
 
       // *hooked-in* `after` handler.
-      function afterHandler(result, argsList) {
+      function afterHandler(result, ...args) {
         const target = this;
 
         // eslint-disable-next-line no-use-before-define
         Object.assign(handlerLog, {
           target,
-          argsList,
+          args,
           isHandledAfter: true,
         });
       }
       const expectedHandlerLog = {
         target: sampleType,
-        argsList: updatingArgsList,
+        args: updatingArgs,
         isHandledAfter: true,
       };
       const initialHandlerLog = {
         target: null,
-        argsList: null,
+        args: null,
         isHandledAfter: false,
       };
       const handlerLog = { ...initialHandlerLog };
@@ -64,12 +64,12 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // references ... twice ... as expected.
           expect(expectedHandlerLog.target).toBe(sampleType);
-          expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
+          expect(expectedHandlerLog.args).toBe(updatingArgs);
 
           expect(handlerLog).toStrictEqual(initialHandlerLog);
         },
@@ -88,26 +88,26 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
 
           expect(sampleType.setABC).not.toBe(unmodifiedSetter);
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // invoke the modified method,
           // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
-          sampleType.setABC(...updatingArgsList);
+          sampleType.setABC(...updatingArgs);
 
           // a `sampleType`'s `valueOf` will equally reflect the
           // most recent changes of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            updatingArgsList,
+            updatingArgs,
           );
 
           // remained a reference ... as expected.
           expect(handlerLog.target).toBe(sampleType);
 
           // not anymore a reference ... which had to be proved ...
-          expect(handlerLog.argsList).not.toBe(updatingArgsList);
+          expect(handlerLog.args).not.toBe(updatingArgs);
           // ... therefore countercheck with the set-up from before ...
-          expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
+          expect(expectedHandlerLog.args).toBe(updatingArgs);
 
           // strict equality finally proves the correct `after` handling.
           expect(handlerLog).toStrictEqual(expectedHandlerLog);

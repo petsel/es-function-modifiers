@@ -1,5 +1,4 @@
 import isFunction from '../../utils/type-detection';
-import getSanitizedTarget from '../../utils/sanitizing';
 
 // provide *"prototype ready"* implementation.
 
@@ -14,14 +13,14 @@ import getSanitizedTarget from '../../utils/sanitizing';
  * @param {afterReturningHandler} handler - The callback/hook provided as `after` (returning) handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(afterReturningType|*)}
  *  Returns either the modified function/method or, in case of any failure, does
  *  return the context it was invoked at (which too is expected to be a `Function` type).
  */
 export function after(handler, target) {
-  target = getSanitizedTarget(target);
+  target = target ?? null;
 
   const proceed = this;
   // prettier-ignore
@@ -30,29 +29,26 @@ export function after(handler, target) {
     isFunction(handler) &&
     isFunction(proceed) &&
 
-    function afterReturningType(...argumentArray) {
+    function afterReturningType(...args) {
       // the target/context of the initial modifier/modification time
       // still can be overruled by a handler's apply/call time context.
-      const context = getSanitizedTarget(this) ?? target;
+      const context = (this ?? null) ?? target;
+
+      const result = proceed.apply(context, args);
       /**
        *  This is a design choice in order to ensure the consistent handling
        *  of (intercepted) arguments in how any handler/callback gets passed
        *  such arguments regardless of the concrete modifier implementation.
        *
-       *  Never `apply` the arguments, but always provide
-       *  them within/as a single array of arguments.
+       *  Never provide arguments within/as a single array, but always
+       *  pass arguments in the most spread way to the handler function.
        *
-       *  nope ... --`handler.apply(context, [result, ...argumentArray]);`--
-       *  nope ... --`handler.call(context, result, ...argumentArray);`--
+       *  yep ... **`handler.apply(context, [result, ...args]);`**
+       *  yep ... **`handler.call(context, result, ...args);`**
        *
-       *  yep ... **`handler.call(context, result, argumentArray);`**
+       *  nope ... --`handler.call(context, result, args);`--
        */
-      const result = proceed.apply(context, argumentArray);
-
-      // `apply` already did decouple the `argumentArray` reference passed/applied
-      // to the original `proceed` function from the one getting passed to `handler`.
-
-      handler.call(context, result, argumentArray);
+      handler.call(context, result, ...args);
 
       // ensure the original method's/function's return value.
       return result;
@@ -75,7 +71,7 @@ after.toString = () => 'after() { [native code] }';
  * @param {afterReturningHandler} handler - The callback/hook provided as `after` (returning) handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(afterReturningType|*)}
  *  Returns either the modified function/method or, in case of any failure,

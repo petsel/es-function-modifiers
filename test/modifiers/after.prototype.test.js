@@ -60,31 +60,31 @@ describe('## Running the Test-Suite for the prototypal *after* modifier implemen
       ' and, as for this scenario, can access from the before executed original function both' +
       ' its return value (`result`) and its arguments as a shallow-copied single `Array` type.',
     () => {
-      const initialArgsList = [9, 8, 7];
-      const updatingArgsList = [1, 2, 3];
+      const initialArgs = [9, 8, 7];
+      const updatingArgs = [1, 2, 3];
 
-      const sampleType = createSampleType(...initialArgsList);
+      const sampleType = createSampleType(...initialArgs);
       const unmodifiedSetter = sampleType.setABC;
 
       // *hooked-in* `after` handler.
-      function afterHandler(result, argsList) {
+      function afterHandler(result, ...args) {
         const target = this;
 
         // eslint-disable-next-line no-use-before-define
         Object.assign(handlerLog, {
           target,
-          argsList,
+          args,
           isHandledAfter: true,
         });
       }
       const expectedHandlerLog = {
         target: sampleType,
-        argsList: updatingArgsList,
+        args: updatingArgs,
         isHandledAfter: true,
       };
       const initialHandlerLog = {
         target: null,
-        argsList: null,
+        args: null,
         isHandledAfter: false,
       };
       const handlerLog = { ...initialHandlerLog };
@@ -96,12 +96,12 @@ describe('## Running the Test-Suite for the prototypal *after* modifier implemen
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // references ... twice ... as expected.
           expect(expectedHandlerLog.target).toBe(sampleType);
-          expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
+          expect(expectedHandlerLog.args).toBe(updatingArgs);
 
           expect(handlerLog).toStrictEqual(initialHandlerLog);
         },
@@ -116,26 +116,26 @@ describe('## Running the Test-Suite for the prototypal *after* modifier implemen
 
           expect(sampleType.setABC).not.toBe(unmodifiedSetter);
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // invoke the modified method,
           // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
-          sampleType.setABC(...updatingArgsList);
+          sampleType.setABC(...updatingArgs);
 
           // a `sampleType`'s `valueOf` will equally reflect the
           // most recent changes of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            updatingArgsList,
+            updatingArgs,
           );
 
           // remained a reference ... as expected.
           expect(handlerLog.target).toBe(sampleType);
 
           // not anymore a reference ... which had to be proved ...
-          expect(handlerLog.argsList).not.toBe(updatingArgsList);
+          expect(handlerLog.args).not.toBe(updatingArgs);
           // ... therefore countercheck with the set-up from before ...
-          expect(expectedHandlerLog.argsList).toBe(updatingArgsList);
+          expect(expectedHandlerLog.args).toBe(updatingArgs);
 
           // strict equality finally proves the correct `after` handling.
           expect(handlerLog).toStrictEqual(expectedHandlerLog);
@@ -152,7 +152,7 @@ describe('## Running the Test-Suite for the prototypal *after* modifier implemen
           function exposeContext() {
             return this;
           }
-          function afterContextHandler(/* argumentArray */) {
+          function afterContextHandler(/* ...args */) {
             // eslint-disable-next-line no-use-before-define
             callTimeLogList.push(this);
           }
@@ -211,12 +211,12 @@ describe('## Running the Test-Suite for the prototypal *after* modifier implemen
       function createObjectType(a, b, c) {
         return { a, b, c };
       }
-      function manipulateObjectTypeAfter(result, argumentArray) {
+      function manipulateObjectTypeAfter(result, ...args) {
         // do manipulate an object type `result` reference.
         result.isManipulatedByAfterHandler = true;
 
         // a totally unexpected return value will not show any effect.
-        return argumentArray;
+        return args;
       }
 
       test(
@@ -245,10 +245,10 @@ describe('## Running the Test-Suite for the prototypal *after* modifier implemen
       function sum(a, b, c) {
         return a + b + c;
       }
-      function afterSumTest(result, argumentArray) {
+      function afterSumTest(result, ...args) {
         // return an own, manipulated, summed-up result which will not show any effect.
 
-        result = sum(...argumentArray.map(value => value * 10));
+        result = sum(...args.map(value => value * 10));
         return result;
       }
       const invalidHandler = { invalid: 'handler' };
