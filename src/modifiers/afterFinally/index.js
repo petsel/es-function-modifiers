@@ -48,17 +48,17 @@ export function afterFinally(handler, target) {
 
       } // finally { ... }
       /**
-       *  This is a design choice in order to ensure the consistent handling
+       * This is a design choice in order to ensure the consistent handling
        *  of (intercepted) arguments in how any handler/callback gets passed
        *  such arguments regardless of the concrete modifier implementation.
        *
-       *  Never `apply` the arguments, but always provide
-       *  them within/as a single array of arguments.
+       *  Never provide arguments within/as a single array, but always
+       *  pass arguments in the most spread way to the handler function.
        *
-       *  nope ... --`handler.apply(context, [result, ...argumentArray]);`--
-       *  nope ... --`handler.call(context, result, ...argumentArray);`--
+       *  yep ... **`handler.apply(context, [result, ...args]);`**
+       *  yep ... **`handler.call(context, result, ...args);`**
        *
-       *  yep ... **`handler.call(context, result, argumentArray);`**
+       *  nope ... --`handler.call(context, result, args);`--
        */
       result = (error || result);
 

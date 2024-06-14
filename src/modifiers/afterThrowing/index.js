@@ -43,17 +43,17 @@ export function afterThrowing(handler, target) {
 
       } catch (exception) {
         /**
-         *  This is a design choice in order to ensure the consistent handling
+         * This is a design choice in order to ensure the consistent handling
          *  of (intercepted) arguments in how any handler/callback gets passed
          *  such arguments regardless of the concrete modifier implementation.
          *
-         *  Never `apply` the arguments, but always provide
-         *  them within/as a single array of arguments.
+         *  Never provide arguments within/as a single array, but always
+         *  pass arguments in the most spread way to the handler function.
          *
-         *  nope ... --`handler.apply(context, [exception, ...args]);`--
-         *  nope ... --`handler.call(context, exception, ...args);`--
+         *  yep ... **`handler.apply(context, [exception, ...args]);`**
+         *  yep ... **`handler.call(context, exception, ...args);`**
          *
-         *  yep ... **`handler.call(context, exception, args);`**
+         *  nope ... --`handler.call(context, exception, args);`--
          */
         result = handler.call(context, exception, ...args);
       }
