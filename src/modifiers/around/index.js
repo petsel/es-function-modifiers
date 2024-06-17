@@ -1,5 +1,4 @@
 import isFunction from '../../utils/type-detection';
-import getSanitizedTarget from '../../utils/sanitizing';
 
 // provide *"prototype ready"* implementation.
 
@@ -12,14 +11,14 @@ import getSanitizedTarget from '../../utils/sanitizing';
  * @param {aroundHandler} handler - The *intercepting* callback provided as `around` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(aroundType|*)}
  *  Returns either the modified function/method or, in case of any failure, does
  *  return the context it was invoked at (which too is expected to be a `Function` type).
  */
 export function around(handler, target) {
-  target = getSanitizedTarget(target);
+  target = target ?? null;
 
   const proceed = this;
   // prettier-ignore
@@ -28,17 +27,25 @@ export function around(handler, target) {
     isFunction(handler) &&
     isFunction(proceed) &&
 
-    function aroundType(...argumentArray) {
+    function aroundType(...args) {
       // the target/context of the initial modifier/modification time
       // still can be overruled by a handler's apply/call time context.
-      const context = getSanitizedTarget(this) ?? target;
+      const context = (this ?? null) ?? target;
 
-      return handler.call(
-        context,
-        proceed,
-        handler,
-        argumentArray,
-      );
+      /**
+       *  This is a design choice in order to ensure the consistent handling
+       *  of (intercepted) arguments in how any handler/callback gets passed
+       *  such arguments regardless of the concrete modifier implementation.
+       *
+       *  Never provide arguments within/as a single array, but always
+       *  pass arguments in the most spread way to the handler function.
+       *
+       *  yep ... **`handler.apply(context, [proceed, handler, ...args]);`**
+       *  yep ... **`handler.call(context, proceed, handler, ...args);`**
+       *
+       *  nope ... --`handler.call(context, proceed, handler, args);`--
+       */
+      return handler.call(context, proceed, handler, ...args);
     }
   ) || proceed;
 }
@@ -56,7 +63,7 @@ around.toString = () => 'around() { [native code] }';
  * @param {aroundHandler} handler - The *intercepting* callback provided as `around` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(aroundType|*)}
  *  Returns either the modified function/method or, in case of any failure,

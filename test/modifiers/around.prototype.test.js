@@ -59,35 +59,35 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
     '### Making use of the prototypal *around*, one can modify the operated function type and,' +
       " as for this scenario, can intercept this original function's control flow entirely.",
     () => {
-      const initialArgsList = [9, 8, 7];
-      const interceptorArgsList = [1, 2, 3];
+      const initialArgs = [9, 8, 7];
+      const interceptorArgs = [1, 2, 3];
 
-      const sampleType = createSampleType(...initialArgsList);
+      const sampleType = createSampleType(...initialArgs);
       const unmodifiedSetter = sampleType.setABC;
 
       // interceptor / intercepting `around` handler.
-      function aroundHandler(proceed, handler, argsList) {
+      function aroundHandler(proceed, handler, ...args) {
         const target = this;
         // eslint-disable-next-line no-use-before-define
         Object.assign(interceptorLog, {
           target,
           proceed,
           handler,
-          argsList,
+          args,
         });
-        proceed.apply(target, interceptorArgsList);
+        proceed.apply(target, interceptorArgs);
       }
       const expectedInterceptorLog = {
         target: sampleType,
         proceed: unmodifiedSetter,
         handler: aroundHandler,
-        argsList: interceptorArgsList,
+        args: interceptorArgs,
       };
       const nullifiedInterceptorLog = {
         target: null,
         proceed: null,
         handler: null,
-        argsList: null,
+        args: null,
       };
       const interceptorLog = { ...nullifiedInterceptorLog };
 
@@ -98,15 +98,15 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           expect(expectedInterceptorLog.target).toBe(sampleType);
           expect(expectedInterceptorLog.proceed).toBe(sampleType.setABC);
           expect(expectedInterceptorLog.proceed).toBe(unmodifiedSetter);
           expect(expectedInterceptorLog.handler).toBe(aroundHandler);
-          expect(expectedInterceptorLog.argsList).toStrictEqual(
-            interceptorArgsList,
+          expect(expectedInterceptorLog.args).toStrictEqual(
+            interceptorArgs,
           );
 
           expect(interceptorLog).toStrictEqual(nullifiedInterceptorLog);
@@ -115,9 +115,10 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
       test(
         'Invoking the modified method allows the `aroundHandler`' +
           " to intercept this modified method's control flow in the expected way.\n\n" +
-          ' Every `around` handler gets passed 3 arguments, 1st `proceed` which is the' +
-          " original function, 2nd `handler` which is the `around` handler's own reference." +
-          ' And 3rd `argumentArray`, an `Array` type which holds any passed argument.',
+          ' Every `around` handler gets passed at least 2 arguments, 1st `proceed` which is the' +
+          " original function and 2nd `handler` which is the `around` handler's own reference." +
+          ' In order to retrieve all the arguments passed to the modified method, one has to' +
+          ' capture them by the rest syntax like via e.g. `...args`.',
         () => {
           // modify `setABC` via a prototypal `around`.
           sampleType.setABC = sampleType.setABC.around(
@@ -127,17 +128,17 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
 
           expect(sampleType.setABC).not.toBe(unmodifiedSetter);
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // invoke the modified method,
           // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
-          sampleType.setABC(...interceptorArgsList);
+          sampleType.setABC(...interceptorArgs);
 
           // a `sampleType`'s `valueOf` will equally reflect the
           // most recent changes of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            interceptorArgsList,
+            interceptorArgs,
           );
 
           expect(interceptorLog).toStrictEqual(expectedInterceptorLog);
@@ -155,7 +156,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
             return this;
           }
           function aroundContextHandler(
-            proceed /* , handler, argumentArray */,
+            proceed /* , handler, ...args */,
           ) {
             return proceed.call(this);
           }
@@ -197,13 +198,13 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
       function sum(a, b, c) {
         return a + b + c;
       }
-      function aroundSumTest(proceed, handler, argumentArray) {
+      function aroundSumTest(proceed, handler, ...args) {
         const checkProceed = () => proceed === sum;
         const checkHandler = () => handler === aroundSumTest;
         const checkArgument = () =>
-          Array.isArray(argumentArray) &&
-          argumentArray.length >= 1 &&
-          argumentArray.every(value => Number.isFinite(value));
+          Array.isArray(args) &&
+          args.length >= 1 &&
+          args.every(value => Number.isFinite(value));
 
         const isValidArguments = [
           checkProceed,
@@ -212,7 +213,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
         ].every(fct => fct());
 
         return isValidArguments
-          ? proceed(...argumentArray)
+          ? proceed(...args)
           : proceed(9, 10, 11);
       }
       const invalidHandler = { invalid: 'handler' };
