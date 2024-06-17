@@ -105,9 +105,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
           expect(expectedInterceptorLog.proceed).toBe(sampleType.setABC);
           expect(expectedInterceptorLog.proceed).toBe(unmodifiedSetter);
           expect(expectedInterceptorLog.handler).toBe(aroundHandler);
-          expect(expectedInterceptorLog.args).toStrictEqual(
-            interceptorArgs,
-          );
+          expect(expectedInterceptorLog.args).toStrictEqual(interceptorArgs);
 
           expect(interceptorLog).toStrictEqual(nullifiedInterceptorLog);
         },
@@ -155,9 +153,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
           function exposeContext() {
             return this;
           }
-          function aroundContextHandler(
-            proceed /* , handler, ...args */,
-          ) {
+          function aroundContextHandler(proceed /* , handler, ...args */) {
             return proceed.call(this);
           }
           const initialContext = { context: 'initial' };
@@ -212,9 +208,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
           checkArgument,
         ].every(fct => fct());
 
-        return isValidArguments
-          ? proceed(...args)
-          : proceed(9, 10, 11);
+        return isValidArguments ? proceed(...args) : proceed(9, 10, 11);
       }
       const invalidHandler = { invalid: 'handler' };
 

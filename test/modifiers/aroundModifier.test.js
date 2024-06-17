@@ -73,9 +73,7 @@ describe('## Running the Test-Suite for the *around* modifier implementations ..
           expect(expectedInterceptorLog.proceed).toBe(sampleType.setABC);
           expect(expectedInterceptorLog.proceed).toBe(unmodifiedSetter);
           expect(expectedInterceptorLog.handler).toBe(aroundHandler);
-          expect(expectedInterceptorLog.args).toStrictEqual(
-            interceptorArgs,
-          );
+          expect(expectedInterceptorLog.args).toStrictEqual(interceptorArgs);
 
           expect(interceptorLog).toStrictEqual(nullifiedInterceptorLog);
         },
