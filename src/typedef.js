@@ -2,22 +2,27 @@
  * Any modified function type's `around` handler (or callback) which enables the
  * interception and generic manipulation of the original function's control flow.
  *
- * Every `around` handler gets passed 3 arguments, 1st `proceed` which is the
- * original function, 2nd `handler` which is the `around` handler's own reference.
- * And 3rd `argumentArray`, an `Array` type which holds any passed argument.
+ * Every `around` handler gets passed at least 2 arguments, with proceed` being
+ * the first one which is the original function and `handler` being the second
+ * which is the `around` handler's own reference.
+ *
+ * All following parameters are the spread values/items of the invoked
+ * modified function's arguments array. Therefore, any concrete handler
+ * either has to know each parameter by its name/purpose or has to retrieve
+ * all of them as array by rest syntax like via e.g. `...args`.
  *
  * @callback aroundHandler
- *  @param {Function} proceed - The original/unmodified function/method.
- *  @param {Function} handler - The `around` handler's own reference.
- *  @param {Array} argumentArray - An `Array` type which holds any passed argument.
+ *  @param {Function} proceed
+ *   The original/unmodified function/method.
+ *  @param {aroundHandler} handler
+ *   The `around` handler's own reference.
+ *  @param {...*[]} args
+ *   An `Array` type which holds any passed argument.
  */
 
 /**
  * The modified function type itself. The return value of any modified function
  * of this type depends on the implementation of its own (injected) `aroundHandler`.
- *
- * Thus only a prototypal `around` or `aroundModifier` enable the interception and
- * generic manipulation of the original function's control flow.
  *
  * @callback aroundType
  *  @returns {*}
@@ -28,11 +33,14 @@
  * Any modified function type's `before` handler (or callback)
  * which will be invoked before the original function was called.
  *
- * Every `before` handler gets passed exactly one argument.
- * The `argumentArray`, an `Array` type which holds any passed argument.
+ * Every `before` handler gets passed the arguments exactly as they were
+ * passed to the modified function. Therefore, any concrete handler either
+ * has to know each parameter by its name/purpose or has to retrieve all
+ * of them as array by rest syntax like via e.g. `...args`.
  *
  * @callback beforeHandler
- *  @param {Array} argumentArray - An `Array` type which holds any passed argument.
+ *  @param {...*[]} args
+ *   An `Array` type which holds any passed argument.
  */
 
 /**
@@ -40,7 +48,8 @@
  * the original function's return value.
  *
  * @callback beforeType
- *  @returns {*} - The original function's return value.
+ *  @returns {*}
+ *   The original function's return value.
  */
 
 /**
@@ -52,9 +61,9 @@
  * original function.
  *
  * All following parameters are the spread values/items of the invoked
- * original function's arguments array. Therefore, any concrete handler
- * either has to know each parameter by its name/purpose or has to receive
- * those by rest syntax like via e.g. `...args`.
+ * modified function's arguments array. Therefore, any concrete handler
+ * either has to know each parameter by its name/purpose or has to retrieve
+ * all of them as array by rest syntax like via e.g. `...args`.
  *
  * @callback afterReturningHandler
  *  @param {*} result
@@ -68,7 +77,8 @@
  * the original function's return value.
  *
  * @callback afterReturningType
- *  @returns {*} - The original function's return value.
+ *  @returns {*}
+ *   The original function's return value.
  */
 
 /**
@@ -80,9 +90,9 @@
  * which got raised by having `try`-ed calling the original function.
  *
  * All following parameters are the spread values/items of the invoked
- * original function's arguments array. Therefore, any concrete handler
- * either has to know each parameter by its name/purpose or has to receive
- * those by rest syntax like via e.g. `...args`.
+ * modified function's arguments array. Therefore, any concrete handler
+ * either has to know each parameter by its name/purpose or has to retrieve
+ * all of them as array by rest syntax like via e.g. `...args`.
  *
  * @callback afterThrowingHandler
  *  @param {Error} exception
@@ -114,9 +124,9 @@
  * raised by having called the original function or the latter's return value.
  *
  * All following parameters are the spread values/items of the invoked
- * original function's arguments array. Therefore, any concrete handler
- * either has to know each parameter by its name/purpose or has to receive
- * those by rest syntax like via e.g. `...args`.
+ * modified function's arguments array. Therefore, any concrete handler
+ * either has to know each parameter by its name/purpose or has to retrieve
+ * all of them as array by rest syntax like via e.g. `...args`.
  *
  * @callback afterFinallyHandler
  *  @param {(Error|*)} result
