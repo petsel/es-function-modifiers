@@ -113,9 +113,10 @@ describe('## Running the Test-Suite for the *afterThrowing* modifier implementat
           ' triggers the `afterThrowingHandler` based exception handling.',
         () => {
           test(
-            'Being invoked by the exception handling `afterThrowingHandler` can' +
-              ' access 1st the raised `exception` (the reason/cause of the invocation failure)' +
-              ' and 2nd the arguments as a shallow-copied single `Array` type.',
+            'Being invoked by the exception handling, `afterThrowingHandler`' +
+              ' can access following arguments, the raised `exception`' +
+              ' (the reason/cause of the invocation failure) and all the modified' +
+              " method's arguments by rest syntax via e.g. `...args`..",
             () => {
               // modify `valueOf` via the non-prototypal `afterThrowingModifier`.
               sampleType.valueOf = afterThrowingModifier(

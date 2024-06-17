@@ -131,8 +131,8 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
       describe('#### Invoking the modified method without raising an exception ...', () => {
         test(
           '... the modified method allows the `afterFinallyHandler` to access' +
-            ' from the before executed original function both its return value' +
-            ' (result) and its arguments as a shallow-copied single `Array` type.',
+            ' from the before executed original function both, its return value as' +
+            ' e.g. `result` and its arguments by rest syntax via e.g. `...args`.',
           () => {
             // invoke the modified method,
             // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
@@ -173,8 +173,8 @@ describe('## Running the Test-Suite for the *afterFinally* modifier implementati
       describe('#### Invoking the modified method and raising an exception ...', () => {
         test(
           '... the modified method allows the `afterFinallyHandler` to access' +
-            ' from the before executed original function both the raised exception' +
-            ' and its arguments as a shallow-copied single `Array` type.',
+            ' from the before executed original function both, the raised exception' +
+            ' and its arguments by rest syntax via e.g. `...args`.',
           () => {
             // restore the `sampleType`s state to its initial value.
             sampleType.setABC(...initialArgs);
