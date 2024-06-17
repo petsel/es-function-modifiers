@@ -67,7 +67,7 @@ before.toString = () => 'before() { [native code] }';
  * @param {beforeHandler} handler - The callback/hook provided as `before` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(beforeType|*)}
  *  Returns either the modified function/method or, in case of any failure,
