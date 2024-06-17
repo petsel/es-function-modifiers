@@ -79,7 +79,7 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
           ' from the before executed original function both its return value' +
           ' (`result`) and its arguments as a shallow-copied single `Array` type.',
         () => {
-          // modify `setABC` via the non prototypal `afterModifier`.
+          // modify `setABC` via the non-prototypal `afterModifier`.
           sampleType.setABC = afterModifier(
             sampleType.setABC,
             afterHandler,
