@@ -25,8 +25,8 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
 
   describe(
     '### Making use of the `afterModifier`, one can modify any passed function type and,' +
-      ' as for this scenario, can access from the before executed original function both' +
-      ' its return value (`result`) and its arguments as a shallow-copied single `Array` type.',
+      ' as for this scenario, can access from the before executed original function both, its' +
+      ' return value as e.g. `result` and its arguments by rest syntax via e.g. `...args`.',
     () => {
       const initialArgs = [9, 8, 7];
       const updatingArgs = [1, 2, 3];
@@ -76,8 +76,9 @@ describe('## Running the Test-Suite for the *after* modifier implementations ...
       );
       test(
         'Invoking the modified method allows the `afterHandler` to access' +
-          ' from the before executed original function both its return value' +
-          ' (`result`) and its arguments as a shallow-copied single `Array` type.',
+          ' from the before executed original function both, its return value as' +
+          " e.g. `result` and all the modified method's arguments by rest syntax" +
+          ' via e.g. `...args`.',
         () => {
           // modify `setABC` via the non-prototypal `afterModifier`.
           sampleType.setABC = afterModifier(

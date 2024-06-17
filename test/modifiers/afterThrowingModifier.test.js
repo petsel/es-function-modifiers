@@ -28,8 +28,8 @@ describe('## Running the Test-Suite for the *afterThrowing* modifier implementat
   describe(
     '### Making use of the `afterThrowingModifier`, one can modify any passed function type and,' +
       ' as for this scenario, can, and only in case the before executed original function fails,' +
-      ' access 1st the raised `exception` (the reason/cause of the invocation failure)' +
-      ' and 2nd the arguments as a shallow-copied single `Array` type.',
+      ' access the raised `exception` (the reason/cause of the invocation failure).' +
+      " The original function's arguments can be accessed by rest syntax via e.g. `...args`.",
     () => {
       const initialArgs = [9, 8, 7];
       const updatingArgs = [1, 2, 3];
@@ -113,9 +113,10 @@ describe('## Running the Test-Suite for the *afterThrowing* modifier implementat
           ' triggers the `afterThrowingHandler` based exception handling.',
         () => {
           test(
-            'Being invoked by the exception handling `afterThrowingHandler` can' +
-              ' access 1st the raised `exception` (the reason/cause of the invocation failure)' +
-              ' and 2nd the arguments as a shallow-copied single `Array` type.',
+            'Being invoked by the exception handling, `afterThrowingHandler`' +
+              ' can access following arguments, the raised `exception`' +
+              ' (the reason/cause of the invocation failure) and all the modified' +
+              " method's arguments by rest syntax via e.g. `...args`..",
             () => {
               // modify `valueOf` via the non-prototypal `afterThrowingModifier`.
               sampleType.valueOf = afterThrowingModifier(

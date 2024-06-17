@@ -116,7 +116,7 @@ describe('## Running the Test-Suite for the prototypal *around* modifier impleme
           ' Every `around` handler gets passed at least 2 arguments, 1st `proceed` which is the' +
           " original function and 2nd `handler` which is the `around` handler's own reference." +
           ' In order to retrieve all the arguments passed to the modified method, one has to' +
-          ' capture them by the rest syntax like via e.g. `...args`.',
+          ' capture them by rest syntax like via e.g. `...args`.',
         () => {
           // modify `setABC` via a prototypal `around`.
           sampleType.setABC = sampleType.setABC.around(

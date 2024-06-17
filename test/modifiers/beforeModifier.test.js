@@ -25,8 +25,8 @@ describe('## Running the Test-Suite for the *before* modifier implementations ..
 
   describe(
     '### Making use of the `beforeModifier`, one can modify any passed function type and,' +
-      " as for this scenario, can access this original function's arguments just as" +
-      ' a shallow-copied single `Array` type.',
+      " as for this scenario, has to access this original function's arguments by rest syntax" +
+      ' via e.g. `...args`.',
     () => {
       const initialArgs = [9, 8, 7];
 
@@ -82,8 +82,9 @@ describe('## Running the Test-Suite for the *before* modifier implementations ..
         },
       );
       test(
-        'Invoking the modified method allows the `beforeHandler` to access the' +
-          " original function's arguments just as a shallow-copied single `Array` type.",
+        'Invoking the modified method allows the `beforeHandler` to access' +
+          ' all the arguments passed to the before executed original function by' +
+          ' rest syntax via e.g. `...args`.',
         () => {
           // modify `setABC` via the non-prototypal `beforeModifier`.
           sampleType.setABC = beforeModifier(

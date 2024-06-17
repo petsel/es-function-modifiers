@@ -67,7 +67,7 @@ describe('## Running the Test-Suite for the prototypal *afterFinally* modifier i
     '### Making use of the prototypal `afterFinally`, one can modify the operated function type' +
       " and as for just this scenario, can access as 1st argument either the original function's" +
       ' *return value* (result) or the *raised exception* in case the before executed original function failed.' +
-      " The original function's arguments get passed 2nd as a shallow-copied single `Array` type.",
+      " The original function's arguments can be accessed by rest syntax via e.g. `...args`.",
     () => {
       const initialArgs = [9, 8, 7];
 
@@ -152,12 +152,11 @@ describe('## Running the Test-Suite for the prototypal *afterFinally* modifier i
           expect(handlerLog).toStrictEqual(initialHandlerLog);
         },
       );
-
       describe('#### Invoking the modified method without raising an exception ...', () => {
         test(
           '... the modified method allows the `afterFinallyHandler` to access' +
-            ' from the before executed original function both its return value' +
-            ' (result) and its arguments as a shallow-copied single `Array` type.',
+            ' from the before executed original function both, its return value as' +
+            ' e.g. `result` and its arguments by rest syntax via e.g. `...args`.',
           () => {
             // modify `setABC` via a prototypal `afterFinally`.
             sampleType.setABC = sampleType.setABC.afterFinally(
@@ -205,8 +204,8 @@ describe('## Running the Test-Suite for the prototypal *afterFinally* modifier i
       describe('#### Invoking the modified method and raising an exception ...', () => {
         test(
           '... the modified method allows the `afterFinallyHandler` to access' +
-            ' from the before executed original function both the raised exception' +
-            ' and its arguments as a shallow-copied single `Array` type.',
+            ' from the before executed original function both, the raised exception' +
+            ' and its arguments by rest syntax via e.g. `...args`.',
           () => {
             // restore the `sampleType`s state to its initial value.
             sampleType.setABC(...initialArgs);

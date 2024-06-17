@@ -57,8 +57,8 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
 
   describe(
     '### Making use of the prototypal *before*, one can modify the operated function type' +
-      " and, as for this scenario, can access this original function's arguments just as" +
-      ' a shallow-copied single `Array` type.',
+      " and, as for this scenario, has to access this original function's arguments by rest syntax" +
+      ' via e.g. `...args`.',
     () => {
       const initialArgs = [9, 8, 7];
 
@@ -114,8 +114,9 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
         },
       );
       test(
-        'Invoking the modified method allows the `beforeHandler` to access the' +
-          " original function's arguments just as a shallow-copied single `Array` type.",
+        'Invoking the modified method allows the `beforeHandler` to access' +
+          ' all the arguments passed to the before executed original function by' +
+          ' rest syntax via e.g. `...args`.',
         () => {
           // modify `setABC` via a prototypal `before`.
           sampleType.setABC = sampleType.setABC.before(
