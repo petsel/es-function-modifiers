@@ -60,38 +60,38 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
       " and, as for this scenario, can access this original function's arguments just as" +
       ' a shallow-copied single `Array` type.',
     () => {
-      const initialArgsList = [9, 8, 7];
+      const initialArgs = [9, 8, 7];
 
-      const updatingArgsList = [1, 2, 3];
-      const manipulatedArgsList = updatingArgsList.map(String);
+      const updatingArgs = [1, 2, 3];
+      const manipulatedArgs = updatingArgs.map(String);
 
-      const sampleType = createSampleType(...initialArgsList);
+      const sampleType = createSampleType(...initialArgs);
       const unmodifiedSetter = sampleType.setABC;
 
       // *hooked-in* `before` handler.
-      function beforeHandler(argsList) {
+      function beforeHandler(...args) {
         const target = this;
 
         // try manipulating the accessible argument array towards the original function.
-        argsList[0] = String(argsList[0]);
-        argsList[1] = String(argsList[1]);
-        argsList[2] = String(argsList[2]);
+        args[0] = String(args[0]);
+        args[1] = String(args[1]);
+        args[2] = String(args[2]);
 
         // eslint-disable-next-line no-use-before-define
         Object.assign(handlerLog, {
           target,
-          argsList,
+          args,
           isHandledBefore: true,
         });
       }
       const expectedHandlerLog = {
         target: sampleType,
-        argsList: manipulatedArgsList,
+        args: manipulatedArgs,
         isHandledBefore: true,
       };
       const initialHandlerLog = {
         target: null,
-        argsList: null,
+        args: null,
         isHandledBefore: false,
       };
       const handlerLog = { ...initialHandlerLog };
@@ -103,12 +103,12 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
           // a `sampleType`'s `valueOf` does always reflect
           // the current state of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // references ... twice ... as expected.
           expect(expectedHandlerLog.target).toBe(sampleType);
-          expect(expectedHandlerLog.argsList).toBe(manipulatedArgsList);
+          expect(expectedHandlerLog.args).toBe(manipulatedArgs);
 
           expect(handlerLog).toStrictEqual(initialHandlerLog);
         },
@@ -125,26 +125,26 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
 
           expect(sampleType.setABC).not.toBe(unmodifiedSetter);
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            initialArgsList,
+            initialArgs,
           );
 
           // invoke the modified method,
           // provide new values for the `sampleType`'s local variables `a`, `b` and `c`.
-          sampleType.setABC(...updatingArgsList);
+          sampleType.setABC(...updatingArgs);
 
           // a `sampleType`'s `valueOf` will equally reflect the
           // most recent changes of its locally scoped variables.
           expect(Object.values(sampleType.valueOf())).toStrictEqual(
-            updatingArgsList,
+            updatingArgs,
           );
 
           // remained a reference ... as expected.
           expect(handlerLog.target).toBe(sampleType);
 
           // not anymore a reference ... which had to be proved ...
-          expect(handlerLog.argsList).not.toBe(manipulatedArgsList);
+          expect(handlerLog.args).not.toBe(manipulatedArgs);
           // ... therefore countercheck with the set-up from before ...
-          expect(expectedHandlerLog.argsList).toBe(manipulatedArgsList);
+          expect(expectedHandlerLog.args).toBe(manipulatedArgs);
 
           // strict equality finally proves the correct `before` handling.
           expect(handlerLog).toStrictEqual(expectedHandlerLog);
@@ -161,7 +161,7 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
           function exposeContext() {
             return this;
           }
-          function beforeContextHandler(/* argumentArray */) {
+          function beforeContextHandler(/* ...args */) {
             // eslint-disable-next-line no-use-before-define
             callTimeLogList.push(this);
           }
@@ -220,16 +220,16 @@ describe('## Running the Test-Suite for the prototypal *before* modifier impleme
       function sum(a, b, c) {
         return a + b + c;
       }
-      function beforeSumTest(argumentArray) {
+      function beforeSumTest(...args) {
         // try manipulating the accessible argument array towards the original function.
 
         /* eslint-disable operator-assignment */
-        argumentArray[0] = argumentArray[0] * 10;
-        argumentArray[1] = argumentArray[1] * 10;
-        argumentArray[2] = argumentArray[2] * 10;
+        args[0] = args[0] * 10;
+        args[1] = args[1] * 10;
+        args[2] = args[2] * 10;
         /* eslint-enable operator-assignment */
 
-        return sum(...argumentArray);
+        return sum(...args);
       }
       const invalidHandler = { invalid: 'handler' };
 

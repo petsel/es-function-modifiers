@@ -1,5 +1,4 @@
 import isFunction from '../../utils/type-detection';
-import getSanitizedTarget from '../../utils/sanitizing';
 
 // provide *"prototype ready"* implementation.
 
@@ -12,14 +11,14 @@ import getSanitizedTarget from '../../utils/sanitizing';
  * @param {beforeHandler} handler - The callback/hook provided as `before` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
- *  It will be sanitized/casted to either an applicable type or to the `null` value.
+ *  It will be sanitized/cast to either an applicable type or to the `null` value.
  *
  * @returns {(beforeType|*)}
  *  Returns either the modified function/method or, in case of any failure, does
  *  return the context it was invoked at (which too is expected to be a `Function` type).
  */
 export function before(handler, target) {
-  target = getSanitizedTarget(target);
+  target = target ?? null;
 
   const proceed = this;
   // prettier-ignore
@@ -28,28 +27,29 @@ export function before(handler, target) {
     isFunction(handler) &&
     isFunction(proceed) &&
 
-    function beforeType(...argumentArray) {
+    function beforeType(...args) {
       // the target/context of the initial modifier/modification time
       // still can be overruled by a handler's apply/call time context.
-      const context = getSanitizedTarget(this) ?? target;
+      const context = (this ?? null) ?? target;
+
       /**
        *  This is a design choice in order to ensure the consistent handling
        *  of (intercepted) arguments in how any handler/callback gets passed
        *  such arguments regardless of the concrete modifier implementation.
        *
-       *  Never `apply` the arguments, but always provide
-       *  them within/as a single array of arguments.
+       *  Never provide arguments within/as a single array, but always
+       *  pass arguments in the most spread way to the handler function.
        *
-       *  nope ... --`handler.apply(context, argumentArray);`--
-       *  yep ... **`handler.call(context, argumentArray);`**
+       *  yep ... **`handler.apply(context, args);`**
+       *  yep ... **`handler.call(context, ...args);`**
+       *
+       *  nope ... --`handler.call(context, args);`--
+       *  nope ... --`handler.call(context, [...args]);`--
        */
+      handler.apply(context, args);
 
-      // `[...argumentArray]` will decouple the `argumentArray` passed to `handler`
-      // from the one getting passed/applied to the original `proceed` function.
-      handler.call(context, [...argumentArray]);
-
-      // ensure the original method's/function's arguments signature and  return value.
-      return proceed.apply(context, argumentArray);
+      // ensure the original method's/function's return value.
+      return proceed.apply(context, args);
     }
   ) || proceed;
 }
