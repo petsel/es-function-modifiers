@@ -10,7 +10,10 @@ import isFunction from '../../utils/type-detection';
  * Once available/enabled as `Function.prototype.after`, any `Function` type can be
  * directly invoked via e.g. `[target.]myFunctionOrMethod.after(handler[, target])`.
  *
- * @param {afterReturningHandler} handler - The callback/hook provided as `after` (returning) handler.
+ * @this {CallableFunction}
+ *  The to be modified function.
+ * @param {afterReturningHandler} handler
+ *  The callback/hook provided as `after` (returning) handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
  *  It will be sanitized/cast to either an applicable type or to the `null` value.
@@ -30,8 +33,8 @@ export function after(handler, target) {
     isFunction(proceed) &&
 
     function afterReturningType(...args) {
-      // the target/context of the initial modifier/modification time
-      // still can be overruled by a handler's apply/call time context.
+      // - the target/context of the initial modifier/modification time
+      //   still can be overruled by a handler's apply/call time context.
       const context = (this ?? null) ?? target;
 
       const result = proceed.apply(context, args);
@@ -67,8 +70,10 @@ after.toString = () => 'after() { [native code] }';
  *
  * Note: `afterReturningModifier` would be a valid alias for `afterModifier`.
  *
- * @param proceed - The original/unmodified function/method.
- * @param {afterReturningHandler} handler - The callback/hook provided as `after` (returning) handler.
+ * @param proceed
+ *  The original/unmodified function/method.
+ * @param {afterReturningHandler} handler
+ *  The callback/hook provided as `after` (returning) handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
  *  It will be sanitized/cast to either an applicable type or to the `null` value.

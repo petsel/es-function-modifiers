@@ -31,8 +31,8 @@ export function afterFinally(handler, target) {
     isFunction(proceed) &&
 
     function afterFinallyType(...args) {
-      // the target/context of the initial modifier/modification time
-      // still can be overruled by a handler's apply/call time context.
+      // - the target/context of the initial modifier/modification time
+      //   still can be overruled by a handler's apply/call time context.
       const context = (this ?? null) ?? target;
 
       let result;
@@ -80,8 +80,10 @@ afterFinally.toString = () => 'afterFinally() { [native code] }';
  * Two `Function` types need to be passed to `afterFinallyModifier` like ...
  * `afterFinallyModifier(proceed, handler[, target])`.
  *
- * @param proceed - The original/unmodified function/method.
- * @param {afterFinallyHandler} handler - The callback/hook provided as `afterFinally` handler.
+ * @param proceed
+ *  The original/unmodified function/method.
+ * @param {afterFinallyHandler} handler
+ *  The callback/hook provided as `afterFinally` handler.
  * @param {*=} target
  *  The optional `target` which should be applicable as a method's *context*.
  *  It will be sanitized/cast to either an applicable type or to the `null` value.
